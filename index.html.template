@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Keyboard Press Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Social / Open Graph meta -->
+  <meta name="description" content="Track total and per-key keyboard presses in your browser." />
+  <meta property="og:title" content="Keyboard Press Counter" />
+  <meta property="og:description" content="Track total and per-key keyboard presses in your browser." />
+  <!-- Use existing repo image (relative path) -->
+  <meta property="og:image" content="./keycalc.png" />
+  <meta property="og:image:alt" content="Keyboard Press Counter preview" />
+  <meta property="og:type" content="website" />
+  <!-- This will be replaced at build time by replace-env.js using the Netlify-provided $URL or $DEPLOY_URL environment variable. -->
+  <meta id="og-url-meta" property="og:url" content="${URL}" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Keyboard Press Counter" />
+  <meta name="twitter:description" content="Track total and per-key keyboard presses in your browser." />
+  <meta name="twitter:image" content="./keycalc.png" />
+  <meta name="twitter:image:alt" content="Keyboard Press Counter preview" />
+  <link rel="image_src" href="./keycalc.png" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #total {
+      font-size: 20px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #333;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Keyboard Press Counter</h1>
+  <div id="total">Total key presses: 0</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Press Count</th>
+      </tr>
+    </thead>
+    <tbody id="keyTable"></tbody>
+  </table>
+
+  <script>
+    // Runtime fallback: set og:url at runtime for clients that execute JS (not used by crawlers),
+    // but helpful for in-page logic if needed.
+    (function() {
+      try {
+        var meta = document.getElementById('og-url-meta');
+        if (meta) {
+          var origin = window.location && window.location.origin ? window.location.origin : '';
+          if (origin) meta.setAttribute('content', origin + '/');
+        }
+      } catch (e) {
+        // ignore
+      }
+    })();
+
+    const keyCounts = {};
+    let totalCount = 0;
+
+    document.addEventListener("keydown", (event) => {
+      const key = event.key;
+
+      totalCount++;
+      document.getElementById("total").textContent =
+        "Total key presses: " + totalCount;
+
+      if (!keyCounts[key]) {
+        keyCounts[key] = 0;
+      }
+
+      keyCounts[key]++;
+
+      updateTable();
+    });
+
+    function updateTable() {
+      const tableBody = document.getElementById("keyTable");
+      tableBody.innerHTML = "";
+
+      for (const key in keyCounts) {
+        const row = document.createElement("tr");
+
+        const keyCell = document.createElement("td");
+        keyCell.textContent = key === " " ? "Space" : key;
+
+        const countCell = document.createElement("td");
+        countCell.textContent = keyCounts[key];
+
+        row.appendChild(keyCell);
+        row.appendChild(countCell);
+        tableBody.appendChild(row);
+      }
+    }
+  </script>
+
+</body>
+</html>
